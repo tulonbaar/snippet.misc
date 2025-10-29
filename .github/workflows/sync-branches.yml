@@ -71,8 +71,9 @@ jobs:
                 --body "Automatic synchronization of branch \`$branch\` with \`main\` failed due to merge conflicts. Please resolve the conflicts manually and merge the changes." \
                 --label "merge-conflict,automation" || echo "Failed to create issue"
               
-              # Abort the merge and continue with other branches
+              # Abort the merge and fail the workflow
               git merge --abort
+              exit 1
             fi
           else
             echo "Branch $branch does not exist, creating from main..."
