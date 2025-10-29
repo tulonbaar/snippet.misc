@@ -45,7 +45,10 @@ jobs:
             echo "Branch $branch exists, proceeding with sync..."
             
             # Checkout the target branch
-            git checkout -B "$branch" "origin/$branch" || git checkout -b "$branch"
+            if ! git checkout -B "$branch" "origin/$branch"; then
+              echo "Failed to check out branch $branch from origin/$branch"
+              exit 1
+            fi
             
             # Merge main into the target branch
             if git merge origin/main --no-edit; then
