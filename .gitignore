@@ -1,0 +1,3 @@
+cert/
+certbot/cert/
+*.pem
