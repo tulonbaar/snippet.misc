@@ -1,3 +1,7 @@
 cert/
 utils/certbot/cert/
 *.pem
+*.pfx
+*.key
+*.csr
+*.crt
