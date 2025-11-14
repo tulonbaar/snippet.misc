@@ -6,3 +6,7 @@ utils/certbot/cert/
 *.key
 *.csr
 *.crt
+
+# Python
+__pycache__/
+*.py[cod]
