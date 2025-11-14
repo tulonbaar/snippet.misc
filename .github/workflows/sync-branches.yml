@@ -3,6 +3,10 @@ name: Sync Branches
 on:
   workflow_dispatch:
     inputs:
+      source_branch:
+        description: 'Source branch to sync from (default: main)'
+        required: false
+        default: 'main'
       target_branches:
         description: 'Branches to sync (comma-separated, default: prod,dev,test)'
         required: false
@@ -27,18 +31,22 @@ jobs:
     - name: Set target branches
       id: set-branches
       run: |
+        SOURCE="${{ github.event.inputs.source_branch }}"
         BRANCHES="${{ github.event.inputs.target_branches }}"
+        echo "source=$SOURCE" >> $GITHUB_OUTPUT
         echo "branches=$BRANCHES" >> $GITHUB_OUTPUT
+        echo "Source branch: $SOURCE"
         echo "Target branches: $BRANCHES"
     
     - name: Sync branches
       run: |
+        SOURCE="${{ steps.set-branches.outputs.source }}"
         BRANCHES="${{ steps.set-branches.outputs.branches }}"
         IFS=',' read -ra BRANCH_ARRAY <<< "$BRANCHES"
         
         for branch in "${BRANCH_ARRAY[@]}"; do
           branch=$(echo "$branch" | xargs) # trim whitespace
-          echo "Syncing branch: $branch"
+          echo "Syncing branch: $branch from $SOURCE"
           
           # Check if branch exists
           if git ls-remote --heads origin "$branch" | grep -q "$branch"; then
@@ -50,9 +58,9 @@ jobs:
               exit 1
             fi
             
-            # Merge main into the target branch
-            if git merge origin/main --no-edit; then
-              echo "Successfully merged main into $branch"
+            # Merge source into the target branch
+            if git merge "origin/$SOURCE" --no-edit; then
+              echo "Successfully merged $SOURCE into $branch"
               
               # Push the updated branch
               if git push origin "$branch"; then
@@ -67,8 +75,8 @@ jobs:
               
               # Create an issue to notify about merge conflict
               gh issue create \
-                --title "Merge conflict: Failed to sync $branch with main" \
-                --body "Automatic synchronization of branch \`$branch\` with \`main\` failed due to merge conflicts. Please resolve the conflicts manually and merge the changes." \
+                --title "Merge conflict: Failed to sync $branch with $SOURCE" \
+                --body "Automatic synchronization of branch \`$branch\` with \`$SOURCE\` failed due to merge conflicts. Please resolve the conflicts manually and merge the changes." \
                 --label "merge-conflict,automation" || echo "Failed to create issue"
               
               # Abort the merge and fail the workflow
@@ -76,8 +84,8 @@ jobs:
               exit 1
             fi
           else
-            echo "Branch $branch does not exist, creating from main..."
-            git checkout -b "$branch" origin/main
+            echo "Branch $branch does not exist, creating from $SOURCE..."
+            git checkout -b "$branch" "origin/$SOURCE"
             git push origin "$branch"
             echo "Created and pushed new branch: $branch"
           fi
@@ -90,5 +98,5 @@ jobs:
     - name: Summary
       run: |
         echo "Branch synchronization completed!"
+        echo "Source branch: ${{ steps.set-branches.outputs.source }}"
         echo "Synchronized branches: ${{ steps.set-branches.outputs.branches }}"
-        echo "Source branch: main"
