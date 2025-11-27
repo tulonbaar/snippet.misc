@@ -10,3 +10,11 @@ utils/certbot/cert/
 # Python
 __pycache__/
 *.py[cod]
+
+.venv/
+env/
+venv.bak/
+venv/
+env.bak/
+pip-selfcheck.json
+*.egg-info/
