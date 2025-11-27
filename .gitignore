@@ -10,7 +10,6 @@ utils/certbot/cert/
 # Python
 __pycache__/
 *.py[cod]
-
 .venv/
 env/
 venv.bak/
