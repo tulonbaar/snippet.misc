@@ -1,0 +1,12 @@
+# Certificates
+cert/
+utils/certbot/cert/
+*.pem
+*.pfx
+*.key
+*.csr
+*.crt
+
+# Python
+__pycache__/
+*.py[cod]
