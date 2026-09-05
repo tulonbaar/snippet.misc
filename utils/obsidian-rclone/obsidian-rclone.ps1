@@ -75,12 +75,12 @@ param(
 # ============================================================================
 
 $Script:Config = @{
-    LocalPath       = "C:\Users\lukasz.bartos\.obsidian"
+    LocalPath       = "C:\Users\username\.obsidian"
     RemotePath      = "gdrive:00 - Central Workspace/obsidian"
     RemoteName      = "gdrive"
     LogDir          = "C:\ProgramData\log"
     RemoteLogPath   = "gdrive:00 - Central Workspace/log"
-    SnapshotDir     = "C:\Users\lukasz.bartos\.obsidian-snapshots"
+    SnapshotDir     = "C:\Users\username\.obsidian-snapshots"
     MaxSnapshots    = 10
 }
 
