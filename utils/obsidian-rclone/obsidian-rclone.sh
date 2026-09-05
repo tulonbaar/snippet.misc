@@ -250,6 +250,11 @@ main() {
         pull) run_pull || EXIT_CODE=$? ;;
         push) run_push || EXIT_CODE=$? ;;
     esac
+
+    if [ "$ACTION" = sync ] && [ "$EXIT_CODE" -eq 7 ] && [ "$RESYNC" = false ]; then
+        log WARN "bisync state is missing or invalid (rclone exit code 7)"
+        log WARN "Initialize or rebuild it with: $(basename "$0") sync --resync"
+    fi
     send_log
     exit "$EXIT_CODE"
 }
